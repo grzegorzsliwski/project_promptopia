@@ -4,12 +4,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { signIn, signOut, useSession, getProviders } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const Nav = () => {
   const { data: session, status } = useSession();
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProviders = async () => {
@@ -29,7 +31,13 @@ const Nav = () => {
   if (loading) {
     return null; // or a loading spinner
   }
-  
+
+  const signOutAndNavigateToHome = async () => {
+    signOut({
+      callbackUrl: '/'
+    });
+  };
+
   return (
     <nav className="flex-between w-full mb-16 pt-3">
       <Link href="/" className="flex gap-2 flex-center">
@@ -49,7 +57,7 @@ const Nav = () => {
             <Link href="/create-prompt" className="black_btn">
               Create Post
             </Link>
-            <button type="button" onClick={signOut} className="outline_btn">
+            <button type="button" onClick={signOutAndNavigateToHome} className="outline_btn">
               Sign Out
             </button>
             <Link href="/profile">
@@ -106,7 +114,7 @@ const Nav = () => {
                   type="button"
                   onClick={() => {
                     setToggleDropdown(false);
-                    signOut();
+                    signOutAndNavigateToHome();
                   }}
                   className="mt-5 w-full black_btn">
                   Sign Out
